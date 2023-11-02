@@ -5,10 +5,14 @@ const helmet = require('helmet')
 const mongoSanitize = require('express-mongo-sanitize')
 const hpp = require('hpp')
 const cors = require('cors')
+const dotenv = require('dotenv').config()
 const app = express()
 // Database import
 const mongoose = require('mongoose')
 
+// routes import
+
+const userRoutes = require('./src/routes/userRoutes')
 
 // Security middleware implement
 
@@ -26,16 +30,24 @@ app.use(rateLimit({
 }))
 
 // Mongo DB Database Connection
-let URI = ""
-let OPTION = { user: 'testuser7777', pass: 'testuser7777', autoIndex: true }
+// let URI = ""
+// let OPTION = { user: 'testuser7777', pass: 'testuser7777', autoIndex: true }
 
-// mongoose.connect(URI, OPTION, (error) => {
-//     console.log('connection success');
-//     console.log(error);
-// })
+mongoose
+    .connect(process.env.DB_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    })
+    .then(() => {
+        console.log("database connected");
+    })
+    .catch(err => {
+        console.log("Could not connect", err);
+    });
+
 
 // Routing implement
-//app.use('/api/v1', router)
+app.use('/api/', userRoutes)
 
 // Undefined route implement
 app.use('*', (req, res) => {
